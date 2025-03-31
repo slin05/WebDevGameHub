@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import TicTacToe from './pages/tictactoe/tictactoe';
+import RockPaperScissors from './pages/rps/RockPaperScissors';
 import './App.css';
 
 function App() {
@@ -12,8 +13,7 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            {/* You'll need to add your game components here */}
-            
+            <Route path="/rock-paper-scissors" element={<RockPaperScissors />} />
             <Route path="/tic-tac-toe" element={<TicTacToe />} />
             <Route path="/tic-tac-toe" element={<div>Tic Tac Toe Game</div>} />
           </Routes>
