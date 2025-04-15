@@ -3,147 +3,169 @@ import React, { useEffect, useRef, useState } from 'react';
 const DinoGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
-  const boardRef = useRef(null); // Ref for the canvas element
-  const [cactusArray, setCactusArray] = useState([]);
-  
+  const boardRef = useRef(null);
+  const contextRef = useRef(null);
+  const velocityY = useRef(0);
+
   const dinoWidth = 88;
   const dinoHeight = 94;
   const dinoX = 50;
   const dinoY = 250 - dinoHeight;
 
-  const [dino, setDino] = useState({ x: dinoX, y: dinoY, width: dinoWidth, height: dinoHeight });
+  const [dino, setDino] = useState({
+    x: dinoX,
+    y: dinoY,
+    width: dinoWidth,
+    height: dinoHeight,
+  });
 
-  // Reference to the canvas and context
-  let context;
+  const [cactusArray, setCactusArray] = useState([]);
+
+  // Images
+  const dinoImg = useRef(new Image());
+  const dinoDeadImg = useRef(new Image());
+  const cactus1Img = useRef(new Image());
+  const cactus2Img = useRef(new Image());
+  const cactus3Img = useRef(new Image());
+
+  // Preload images
+  useEffect(() => {
+    let loadedCount = 0;
+    const totalImages = 5;
+
+    const checkLoaded = () => {
+      loadedCount++;
+      if (loadedCount === totalImages) {
+        setImagesLoaded(true);
+      }
+    };
+
+    dinoImg.current.src = './img/dino.png';
+    dinoImg.current.onload = checkLoaded;
+    dinoImg.current.onerror = () => console.error("Failed to load dino.png");
+
+    dinoDeadImg.current.src = './img/dino-dead.png';
+    dinoDeadImg.current.onload = checkLoaded;
+    dinoDeadImg.current.onerror = () => console.error("Failed to load dino-dead.png");
+
+    cactus1Img.current.src = './img/cactus1.png';
+    cactus1Img.current.onload = checkLoaded;
+    cactus1Img.current.onerror = () => console.error("Failed to load cactus1.png");
+
+    cactus2Img.current.src = './img/cactus2.png';
+    cactus2Img.current.onload = checkLoaded;
+    cactus2Img.current.onerror = () => console.error("Failed to load cactus2.png");
+
+    cactus3Img.current.src = './img/cactus3.png';
+    cactus3Img.current.onload = checkLoaded;
+    cactus3Img.current.onerror = () => console.error("Failed to load cactus3.png");
+  }, []);
 
   useEffect(() => {
+    if (!imagesLoaded) return;
+
     const board = boardRef.current;
     board.height = 250;
     board.width = 750;
-    context = board.getContext("2d");
+    contextRef.current = board.getContext('2d');
 
-    const dinoImg = new Image();
-    dinoImg.src = "./img/dino.png";
+    let animationFrameId;
 
-    dinoImg.onload = function() {
-      context.drawImage(dinoImg, dino.x, dino.y, dino.width, dino.height);
-    }
-
-    const cactus1Img = new Image();
-    cactus1Img.src = "./img/cactus1.png";
-    const cactus2Img = new Image();
-    cactus2Img.src = "./img/cactus2.png";
-    const cactus3Img = new Image();
-    cactus3Img.src = "./img/cactus3.png";
-
-    let velocityY = 0;
-    const gravity = 0.4;
-    const velocityX = -8;
-
-    let gameInterval;
     const updateGame = () => {
       if (gameOver) return;
 
+      const context = contextRef.current;
       context.clearRect(0, 0, board.width, board.height);
 
-      // Dino Gravity
-      velocityY += gravity;
-      setDino(prevDino => ({ ...prevDino, y: Math.min(prevDino.y + velocityY, dinoY) }));
+      velocityY.current += 0.4;
+      setDino((prev) => {
+        const newY = Math.min(prev.y + velocityY.current, dinoY);
+        return { ...prev, y: newY };
+      });
 
-      context.drawImage(dinoImg, dino.x, dino.y, dino.width, dino.height);
+      context.drawImage(dinoImg.current, dino.x, dino.y, dino.width, dino.height);
 
-      // Cactus Movement
-      cactusArray.forEach(cactus => {
-        cactus.x += velocityX;
+      cactusArray.forEach((cactus) => {
+        cactus.x -= 8;
         context.drawImage(cactus.img, cactus.x, cactus.y, cactus.width, cactus.height);
 
         if (detectCollision(dino, cactus)) {
           setGameOver(true);
-          dinoImg.src = "./img/dino-dead.png";
-          dinoImg.onload = () => context.drawImage(dinoImg, dino.x, dino.y, dino.width, dino.height);
+          dinoImg.current = dinoDeadImg.current;
         }
       });
 
-      setScore(prevScore => prevScore + 1);
-
-      gameInterval = requestAnimationFrame(updateGame);
+      setScore((prev) => prev + 1);
+      animationFrameId = requestAnimationFrame(updateGame);
     };
 
     requestAnimationFrame(updateGame);
 
-    return () => {
-      cancelAnimationFrame(gameInterval); // Cleanup when the component unmounts
-    };
-  }, [dino, cactusArray, gameOver]);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [imagesLoaded, gameOver, cactusArray, dino]);
 
-  // Jump logic
   const moveDino = (e) => {
     if (gameOver) return;
 
-    if ((e.code === "Space" || e.code === "ArrowUp") && dino.y === dinoY) {
-      velocityY = -10;
+    if ((e.code === 'Space' || e.code === 'ArrowUp') && dino.y === dinoY) {
+      velocityY.current = -10;
     }
   };
 
   useEffect(() => {
-    document.addEventListener("keydown", moveDino);
-    return () => {
-      document.removeEventListener("keydown", moveDino);
-    };
+    document.addEventListener('keydown', moveDino);
+    return () => document.removeEventListener('keydown', moveDino);
   }, [dino.y, gameOver]);
 
-  // Cactus spawn logic
   useEffect(() => {
-    if (gameOver) return;
+    if (!imagesLoaded || gameOver) return;
 
-    const placeCactus = () => {
+    const interval = setInterval(() => {
       const cactus = {
         img: null,
-        x: 700,
+        x: 750,
         y: dinoY,
         width: null,
-        height: 70
+        height: 70,
       };
 
-      let placeCactusChance = Math.random();
-
-      if (placeCactusChance > 0.90) {
-        cactus.img = cactus3Img;
+      const chance = Math.random();
+      if (chance > 0.9) {
+        cactus.img = cactus3Img.current;
         cactus.width = 102;
-      } else if (placeCactusChance > 0.70) {
-        cactus.img = cactus2Img;
+      } else if (chance > 0.7) {
+        cactus.img = cactus2Img.current;
         cactus.width = 69;
       } else {
-        cactus.img = cactus1Img;
+        cactus.img = cactus1Img.current;
         cactus.width = 34;
       }
 
-      setCactusArray(prevArray => [...prevArray, cactus]);
+      setCactusArray((prev) => {
+        const newArray = [...prev, cactus];
+        return newArray.length > 5 ? newArray.slice(1) : newArray;
+      });
+    }, 1000);
 
-      // Limit cactus array size
-      if (cactusArray.length > 5) {
-        setCactusArray(prevArray => prevArray.slice(1));
-      }
-    };
-
-    const cactusInterval = setInterval(placeCactus, 1000);
-
-    return () => clearInterval(cactusInterval); // Cleanup interval
-  }, [cactusArray, gameOver]);
+    return () => clearInterval(interval);
+  }, [imagesLoaded, gameOver]);
 
   const detectCollision = (a, b) => {
-    return a.x < b.x + b.width &&
-           a.x + a.width > b.x &&
-           a.y < b.y + b.height &&
-           a.y + a.height > b.y;
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
   };
 
   return (
     <div>
       <canvas ref={boardRef} id="board"></canvas>
-      <div>Score: {score}</div>
-      {gameOver && <div>Game Over</div>}
+      <div style={{ marginTop: '10px' }}>Score: {score}</div>
+      {gameOver && <div style={{ color: 'red' }}>Game Over</div>}
     </div>
   );
 };

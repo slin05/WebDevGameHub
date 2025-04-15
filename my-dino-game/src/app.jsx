@@ -1,5 +1,5 @@
 import React from 'react';
-import DinoGame from './DinoGame';
+import DinoGame from './components/DinoGame';
 import './app.css';
 
 function App() {
