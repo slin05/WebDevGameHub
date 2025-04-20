@@ -1,0 +1,35 @@
+/* DinoGame.css */
+
+.game {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background-color: #f4f4f4;
+}
+
+.dino {
+  position: absolute;
+  bottom: 0;
+  left: 50px;
+  width: 40px;
+  height: 40px;
+  background-color: black;
+}
+
+.obstacle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 40px;
+  background-color: green;
+}
+
+.game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  color: red;
+}

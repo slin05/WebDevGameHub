@@ -25,6 +25,12 @@ function HomePage() {
             <Link to="/tic-tac-toe" className="game-link">Play Now</Link>
           </div>
         </div>
+
+        <div className="game-card">
+          <h3>Dino Game</h3>
+          <p>Jump over cacti in this endless runner game!</p>
+          <Link to="/dino-game" className="game-link">Play Now</Link>
+        </div>
       </section>
       
       <footer className="home-footer">
