@@ -24,12 +24,18 @@ function HomePage() {
             <p>Challenge yourself in this strategic game of X's and O's.</p>
             <Link to="/tic-tac-toe" className="game-link">Play Now</Link>
           </div>
-        </div>
-
-        <div className="game-card">
-          <h3>Dino Game</h3>
-          <p>Jump over cacti in this endless runner game!</p>
-          <Link to="/dino-game" className="game-link">Play Now</Link>
+          
+          <div className="game-card">
+            <h3>Dino Game</h3>
+            <p>Jump over cacti in this endless runner game!</p>
+            <Link to="/dino-game" className="game-link">Play Now</Link>
+          </div>
+          
+          <div className="game-card">
+            <h3>Blackjack</h3>
+            <p>Test your luck in this classic card game against the dealer!</p>
+            <Link to="/black-jack" className="game-link">Play Now</Link>
+          </div>
         </div>
       </section>
       

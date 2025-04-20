@@ -21,6 +21,9 @@ function Navigation() {
         <li className="nav-item">
           <Link to="/dino-game" className="nav-link">Dino Game</Link>
         </li>
+        <li className="nav-item">
+          <Link to="/black-jack" className="nav-link">Blackjack</Link>
+        </li>
       </ul>
     </nav>
   );
