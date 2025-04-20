@@ -40,7 +40,7 @@ function HomePage() {
       </section>
       
       <footer className="home-footer">
-        <p>Created with React and React Router</p>
+        <p>GameHub @2025</p>
       </footer>
     </div>
   );
