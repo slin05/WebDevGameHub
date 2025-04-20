@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const WelcomeView = ({userName, setUserName, onGameStart}) => {
   const [showButton, setShowButton] = useState(userName.length >= 2);
+  const [gameMode, setGameMode] = useState("single");
   
   const handleNameChange = (e) => {
     const value = e.target.value;
@@ -31,12 +32,39 @@ const WelcomeView = ({userName, setUserName, onGameStart}) => {
             maxLength="15"
           />
         </div>
+        
+        <div className="form-group">
+          <label>Game Mode: </label>
+          <div>
+            <label style={{ marginRight: '15px' }}>
+              <input
+                type="radio"
+                name="gameMode"
+                value="single"
+                checked={gameMode === "single"}
+                onChange={() => setGameMode("single")}
+              /> 
+              Single Player (vs CPU)
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gameMode"
+                value="multiplayer"
+                checked={gameMode === "multiplayer"}
+                onChange={() => setGameMode("multiplayer")}
+              /> 
+              Multiplayer (Browser Tabs)
+            </label>
+          </div>
+        </div>
+        
         {showButton && (
           <button 
             className="btn btn-primary" 
             id="start-game-button" 
             type="button"
-            onClick={onGameStart}
+            onClick={() => onGameStart(gameMode)}
           >
             Start Game!
           </button>

@@ -30,6 +30,12 @@ function HomePage() {
             <p>Jump over cacti in this endless runner game!</p>
             <Link to="/dino-game" className="game-link">Play Now</Link>
           </div>
+
+          <div className="game-card">
+            <h3>Wordle</h3>
+            <p>Guess the right word in Wordle!</p>
+            <Link to="/wordle" className="game-link">Play Now</Link>
+          </div>
           
           <div className="game-card">
             <h3>Blackjack</h3>
@@ -37,6 +43,7 @@ function HomePage() {
             <Link to="/black-jack" className="game-link">Play Now</Link>
           </div>
         </div>
+
       </section>
       
       <footer className="home-footer">

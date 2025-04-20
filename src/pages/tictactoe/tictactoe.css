@@ -40,3 +40,129 @@
 .read-the-docs {
   color: #888;
 }
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.game {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.game-board {
+  margin-right: 20px;
+}
+
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+  min-width: 300px;
+}
+
+.board-row {
+  display: flex;
+}
+
+.square {
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: -1px;
+  margin-top: -1px;
+}
+
+.game-lobby {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.lobby-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.room-code-input, 
+.player-name-input {
+  margin-bottom: 1rem;
+}
+
+.room-code-input input,
+.player-name-input input,
+.name-edit input {
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.create-room-btn,
+.join-room-btn,
+.exit-room-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.create-room-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.join-room-btn {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+}
+
+.exit-room-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  margin-top: 0.5rem;
+}
+
+.room-info {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.room-code {
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 0.5rem;
+}
+
+.game-status {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.player-info {
+  margin-bottom: 1rem;
+}
+
+.name-edit {
+  margin-top: 1rem;
+}

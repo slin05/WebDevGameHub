@@ -24,6 +24,9 @@ function Navigation() {
         <li className="nav-item">
           <Link to="/black-jack" className="nav-link">Blackjack</Link>
         </li>
+        <li className="nav-item">
+          <Link to="/wordle" className="nav-link">Wordle</Link>
+        </li>
       </ul>
     </nav>
   );
