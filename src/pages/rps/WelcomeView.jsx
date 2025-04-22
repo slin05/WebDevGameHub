@@ -54,7 +54,7 @@ const WelcomeView = ({userName, setUserName, onGameStart}) => {
                 checked={gameMode === "multiplayer"}
                 onChange={() => setGameMode("multiplayer")}
               /> 
-              Multiplayer (Browser Tabs)
+              Multiplayer 
             </label>
           </div>
         </div>

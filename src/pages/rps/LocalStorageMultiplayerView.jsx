@@ -78,8 +78,8 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
   
   const renderLobby = () => (
     <div id="welcome-screen">
-      <h2>Tab Multiplayer (LocalStorage)</h2>
-      <p>Play Rock Paper Scissors across multiple browser tabs</p>
+      <h2>Multiplayer</h2>
+      <p>Play Rock Paper Scissors against someone else!</p>
       
       {!joiningRoom ? (
         <div>
@@ -133,7 +133,7 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
     <div id="game-screen">
       <div id="room-info">
         <h3>Room Code: {roomCode}</h3>
-        <p>Share this code with friends to let them join (in a different tab)</p>
+        <p>Share this code with friends to let them join</p>
       </div>
       
       <div id="score-tally">

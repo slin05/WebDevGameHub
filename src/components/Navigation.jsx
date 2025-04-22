@@ -1,33 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Navigation.css';
 
 function Navigation() {
   return (
-    <nav className="navigation">
-      <div className="nav-brand">
-        <Link to="/" className="nav-logo">GameHub</Link>
+    <nav className="bg-blue-700 p-2">
+      <div className="flex flex-col items-center">
+        <h1 className="text-white text-xl mb-2">ByteMe</h1>
+        <div className="flex flex-wrap justify-center">
+          <Link to="/" className="text-white mx-2 underline">Home</Link>
+          <Link to="/rock-paper-scissors" className="text-white mx-2 underline">Rock Paper Scissors</Link>
+          <Link to="/tic-tac-toe" className="text-white mx-2 underline">Tic Tac Toe</Link>
+          <Link to="/dino-game" className="text-white mx-2 underline">Dino Game</Link>
+          <Link to="/black-jack" className="text-white mx-2 underline">Blackjack</Link>
+          <Link to="/wordle" className="text-white mx-2 underline">Wordle</Link>
+        </div>
       </div>
-      <ul className="nav-links">
-        <li className="nav-item">
-          <Link to="/" className="nav-link">Home</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/rock-paper-scissors" className="nav-link">Rock Paper Scissors</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/tic-tac-toe" className="nav-link">Tic Tac Toe</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/dino-game" className="nav-link">Dino Game</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/black-jack" className="nav-link">Blackjack</Link>
-        </li>
-        <li className="nav-item">
-          <Link to="/wordle" className="nav-link">Wordle</Link>
-        </li>
-      </ul>
     </nav>
   );
 }

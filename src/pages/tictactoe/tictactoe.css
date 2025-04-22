@@ -1,72 +1,79 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f7f7f7;
+  color: #333;
+}
+
+.lobby {
+  max-width: 320px;
+  margin: 30px auto;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.lobby h1 {
+  margin-bottom: 25px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.create-section, .join-section {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-.game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+input {
+  display: block;
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-.game {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 2rem;
+button {
+  width: 100%;
+  padding: 8px;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-.game-board {
-  margin-right: 20px;
+button:hover {
+  background: #3367d6;
 }
 
-.game-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  text-align: left;
-  min-width: 300px;
+.error {
+  color: #d93025;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.game-info {
+  margin-bottom: 15px;
+}
+
+.room-code {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 5px 0;
+}
+
+.player-role {
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.status {
+  font-size: 1.1rem;
+  margin: 0 0 15px 0;
 }
 
 .board-row {
@@ -76,93 +83,53 @@
 .square {
   width: 60px;
   height: 60px;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  margin-right: -1px;
-  margin-top: -1px;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  border: 2px solid #333;  
+  background: #f9f9f9;     
+  color: #333;       
 }
 
-.game-lobby {
-  max-width: 500px;
-  margin: 0 auto;
+.square:empty {
+  background: #f0f0f0;
+}
+
+.square:not(:empty) {
+  color: #333;           
+}
+
+.board {
+  border: 2px solid #333;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.game {
+  max-width: 300px;
+  margin: 30px auto;
   text-align: center;
+  background: white;     
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.lobby-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.controls {
+  display: flex;
+  gap: 10px;
 }
 
-.room-code-input, 
-.player-name-input {
-  margin-bottom: 1rem;
+.controls button {
+  flex: 1;
 }
 
-.room-code-input input,
-.player-name-input input,
-.name-edit input {
-  margin-left: 0.5rem;
-  padding: 0.5rem;
-  font-size: 1rem;
+.controls button:last-child {
+  background: #ea4335;
 }
 
-.create-room-btn,
-.join-room-btn,
-.exit-room-btn {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.create-room-btn {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-}
-
-.join-room-btn {
-  background-color: #2196F3;
-  color: white;
-  border: none;
-}
-
-.exit-room-btn {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  margin-top: 0.5rem;
-}
-
-.room-info {
-  margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #f8f8f8;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.room-code {
-  font-weight: bold;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-}
-
-.error-message {
-  color: red;
-  margin-top: 0.5rem;
-}
-
-.game-status {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.player-info {
-  margin-bottom: 1rem;
-}
-
-.name-edit {
-  margin-top: 1rem;
+.controls button:last-child:hover {
+  background: #d73127;
 }

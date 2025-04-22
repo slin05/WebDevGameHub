@@ -1,53 +1,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './HomePage.css';
 
 function HomePage() {
   return (
-    <div className="home-container">
-      <header className="home-header">
-        <h1>Welcome to GameHub</h1>
-        <p>Your one-stop destination for fun React-based games!</p>
-      </header>
+    <div className="p-4">
+      <h1 className="text-3xl text-center mb-4">ByteMe!</h1>
+      <p className="text-center mb-6">Time to take a Byte out of some classics!</p>
       
-      <section className="games-showcase">
-        <h2>Available Games</h2>
-        <div className="game-cards">
-          <div className="game-card">
-            <h3>Rock Paper Scissors</h3>
-            <p>Play the classic game of chance against the computer!</p>
-            <Link to="/rock-paper-scissors" className="game-link">Play Now</Link>
-          </div>
-          
-          <div className="game-card">
-            <h3>Tic Tac Toe</h3>
-            <p>Challenge yourself in this strategic game of X's and O's.</p>
-            <Link to="/tic-tac-toe" className="game-link">Play Now</Link>
-          </div>
-          
-          <div className="game-card">
-            <h3>Dino Game</h3>
-            <p>Jump over cacti in this endless runner game!</p>
-            <Link to="/dino-game" className="game-link">Play Now</Link>
-          </div>
-
-          <div className="game-card">
-            <h3>Wordle</h3>
-            <p>Guess the right word in Wordle!</p>
-            <Link to="/wordle" className="game-link">Play Now</Link>
-          </div>
-          
-          <div className="game-card">
-            <h3>Blackjack</h3>
-            <p>Test your luck in this classic card game against the dealer!</p>
-            <Link to="/black-jack" className="game-link">Play Now</Link>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="border p-4">
+          <h3 className="font-bold">Rock Paper Scissors</h3>
+          <p>Play the classic game of chance against the computer!</p>
+          <Link to="/rock-paper-scissors" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
         </div>
-
-      </section>
+        
+        <div className="border p-4">
+          <h3 className="font-bold">Tic Tac Toe</h3>
+          <p>Challenge yourself in this strategic game of X's and O's.</p>
+          <Link to="/tic-tac-toe" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
+        </div>
+        
+        <div className="border p-4">
+          <h3 className="font-bold">Dino Game</h3>
+          <p>Jump over cacti in this endless runner game!</p>
+          <Link to="/dino-game" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
+        </div>
+        
+        <div className="border p-4">
+          <h3 className="font-bold">Wordle</h3>
+          <p>Guess the right word in Wordle!</p>
+          <Link to="/wordle" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
+        </div>
+        
+        <div className="border p-4">
+          <h3 className="font-bold">Blackjack</h3>
+          <p>Test your luck in this classic card game against the dealer!</p>
+          <Link to="/black-jack" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
+        </div>
+      </div>
       
-      <footer className="home-footer">
-        <p>GameHub @2025</p>
+      <footer className="mt-8 text-center text-gray-500">
+        <p>ByteMe @2025</p>
       </footer>
     </div>
   );

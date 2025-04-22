@@ -6,20 +6,14 @@ export class LocalStorageMultiplayerRPS {
       this.pollInterval = null;
       this.onStateChanged = null;
       
-      // Initialize or join the game
       const existingGameJSON = localStorage.getItem(this.storageKey);
       if (existingGameJSON) {
-        // Game exists, join it
         this.joinExistingGame(JSON.parse(existingGameJSON));
       } else {
-        // Create new game
         this.createNewGame();
       }
       
-      // Set up polling to check for changes
       this.startPolling();
-      
-      // Listen for storage events from other tabs
       window.addEventListener('storage', this.handleStorageChange.bind(this));
     }
     
@@ -36,7 +30,6 @@ export class LocalStorageMultiplayerRPS {
     }
     
     joinExistingGame(gameState) {
-      // Add this player if not already in the game
       if (!gameState.players.includes(this.playerName)) {
         gameState.players.push(this.playerName);
         gameState.scores[this.playerName] = 0;
@@ -55,22 +48,17 @@ export class LocalStorageMultiplayerRPS {
       const gameState = this.getGameState();
       if (!gameState) return;
       
-      // Apply updates
       updater(gameState);
       
-      // Mark as updated
       gameState.lastUpdated = Date.now();
       
-      // Save back to localStorage
       localStorage.setItem(this.storageKey, JSON.stringify(gameState));
     }
     
     makeSelection(selection) {
       this.updateGameState(gameState => {
-        // Record this player's selection
         gameState.selections[this.playerName] = selection;
         
-        // Check if all players have made selections
         const allPlayersSelected = gameState.players.every(player => 
           gameState.selections[player] !== undefined
         );
@@ -78,7 +66,6 @@ export class LocalStorageMultiplayerRPS {
         if (allPlayersSelected && gameState.players.length > 1) {
           this.determineRoundWinner(gameState);
           
-          // Reset selections for next round
           gameState.selections = {};
         }
       });
@@ -90,7 +77,6 @@ export class LocalStorageMultiplayerRPS {
       const gameState = this.getGameState();
       if (!gameState) return false;
       
-      // Check if all players have made selections
       const allPlayersSelected = gameState.players.every(player => 
         gameState.selections[player] !== undefined
       );
@@ -101,7 +87,6 @@ export class LocalStorageMultiplayerRPS {
     determineRoundWinner(gameState) {
       const { players, selections, scores } = gameState;
       
-      // For 2 players
       if (players.length === 2) {
         const p1 = players[0];
         const p2 = players[1];
@@ -126,10 +111,6 @@ export class LocalStorageMultiplayerRPS {
         
         gameState.gameHistory.push(result);
       } else if (players.length > 2) {
-        // For 3+ players - implement multi-player logic
-        // Similar to previous implementation
-        
-        // Simple implementation for multi-player
         let resultLog = 'Round results: ';
         players.forEach(player => {
           resultLog += `${player} chose ${selections[player]}, `;
@@ -140,7 +121,6 @@ export class LocalStorageMultiplayerRPS {
     }
     
     startPolling() {
-      // Check for updates every 1 second
       this.pollInterval = setInterval(() => {
         const gameState = this.getGameState();
         
@@ -151,7 +131,6 @@ export class LocalStorageMultiplayerRPS {
     }
     
     handleStorageChange(event) {
-      // Check if the change is for our game
       if (event.key === this.storageKey && this.onStateChanged) {
         const gameState = JSON.parse(event.newValue);
         this.onStateChanged(gameState);
@@ -159,25 +138,19 @@ export class LocalStorageMultiplayerRPS {
     }
     
     leaveGame() {
-      // Remove player from the game
       this.updateGameState(gameState => {
         gameState.players = gameState.players.filter(p => p !== this.playerName);
         delete gameState.scores[this.playerName];
         delete gameState.selections[this.playerName];
         
-        // Add a history entry
         gameState.gameHistory.push(`${this.playerName} left the game`);
         
-        // If no players left, remove the game entirely
         if (gameState.players.length === 0) {
           localStorage.removeItem(this.storageKey);
         }
       });
       
-      // Stop polling
       clearInterval(this.pollInterval);
-      
-      // Remove event listener
       window.removeEventListener('storage', this.handleStorageChange);
     }
   }
