@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #1e3a8a; /* Dark blue background */
+    background-color: #1e3a8a; 
     color: white;
   }
   
@@ -36,7 +36,7 @@
   }
   
   .nav-link:hover {
-    color: #60a5fa; /* Lighter blue on hover */
+    color: #60a5fa; 
   }
   
   .nav-link:hover::after {

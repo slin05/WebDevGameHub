@@ -30,14 +30,12 @@ const BlackjackTable = () => {
     const [isDealerTurn, setIsDealerTurn] = useState(false);
     const [error, setError] = useState(null);
 
-    // Initialize or reset the deck
     useEffect(() => {
         if (deck.length === 0) {
             setDeck(initialDeck());
         }
     }, [deck.length]);
 
-    // Debug current game state
     useEffect(() => {
         console.log("Current game state:", {
             deckSize: deck.length,
@@ -54,19 +52,16 @@ const BlackjackTable = () => {
             console.log("Starting new game...");
             const newDeck = initialDeck();
             
-            // Safety check
             if (newDeck.length < 4) {
                 setError("Deck initialization failed");
                 return;
             }
             
-            // Deal cards one at a time
             const playerCards = [newDeck.pop(), newDeck.pop()];
             const dealerCards = [newDeck.pop(), newDeck.pop()];
 
             console.log("Initial hands:", { playerCards, dealerCards });
 
-            // Update state more carefully
             setDeck(newDeck);
             setPlayerHand(playerCards);
             setDealerHand(dealerCards);
@@ -115,7 +110,6 @@ const BlackjackTable = () => {
         console.log("Player stays. Dealer's turn.");
         setIsDealerTurn(true);
         
-        // Run dealer's turn after state update
         setTimeout(dealerTurn, 0);
     };
 

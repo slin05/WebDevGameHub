@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './DinoGame.css';
 
-// Import images directly
 import dinoImageSrc from './img/dino.png';
 import dinoDeadImageSrc from './img/dino-dead.png';
 import cactus1ImageSrc from './img/cactus1.png';

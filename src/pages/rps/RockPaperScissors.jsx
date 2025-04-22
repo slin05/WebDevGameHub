@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 function App() {
   const [userName, setUserName] = useState("");
   const [gameStarted, setGameStarted] = useState(false);
-  const [gameMode, setGameMode] = useState("single"); // "single" or "multiplayer"
+  const [gameMode, setGameMode] = useState("single");
   
   useEffect(() => {
     document.title = "Rock Paper Scissors";

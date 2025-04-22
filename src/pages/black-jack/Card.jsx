@@ -1,12 +1,10 @@
 import React from 'react';
 
 const Card = ({ card, isFaceDown }) => {
-    // Parse card info
     const parts = card.split('_of_');
     const rank = parts[0];
     const suit = parts[1]?.split('.')[0];
     
-    // Convert rank to display format
     let displayRank;
     switch(rank) {
         case 'a': displayRank = 'A'; break;
@@ -16,7 +14,6 @@ const Card = ({ card, isFaceDown }) => {
         default: displayRank = rank;
     }
     
-    // Get suit symbol
     const getSuitSymbol = () => {
         switch(suit) {
             case 'hearts': return '♥';
@@ -27,11 +24,9 @@ const Card = ({ card, isFaceDown }) => {
         }
     };
     
-    // Determine color based on suit
     const isRed = suit === 'hearts' || suit === 'diamonds';
     const color = isRed ? 'red' : 'black';
     
-    // Card back (for face down)
     if (isFaceDown) {
         return (
             <div className="card" style={{ margin: '5px' }}>
@@ -51,7 +46,6 @@ const Card = ({ card, isFaceDown }) => {
         );
     }
     
-    // Card front with Unicode symbols
     return (
         <div className="card" style={{ margin: '5px' }}>
             <div style={{
@@ -70,7 +64,6 @@ const Card = ({ card, isFaceDown }) => {
                 color: color,
                 fontFamily: 'Arial, sans-serif'
             }}>
-                {/* Top left corner */}
                 <div style={{ 
                     fontSize: '18px', 
                     fontWeight: 'bold',
@@ -83,7 +76,6 @@ const Card = ({ card, isFaceDown }) => {
                     </div>
                 </div>
                 
-                {/* Center symbol */}
                 <div style={{
                     position: 'absolute',
                     top: '50%',
@@ -95,7 +87,6 @@ const Card = ({ card, isFaceDown }) => {
                     {getSuitSymbol()}
                 </div>
                 
-                {/* Bottom right corner (inverted) */}
                 <div style={{ 
                     fontSize: '18px', 
                     fontWeight: 'bold',
