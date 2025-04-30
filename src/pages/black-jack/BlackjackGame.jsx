@@ -1,6 +1,6 @@
 import React from 'react';
 import BlackjackTable from './BlackjackTable';
-import '../../black-jack/styles/Blackjack.css';
+import './styles/Blackjack.css';
 
 const App = () => {
     return (
