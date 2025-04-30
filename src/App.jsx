@@ -10,7 +10,7 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/WebDevGameHub">
       <div className="app">
         <Navigation />
         <main className="main-content">
