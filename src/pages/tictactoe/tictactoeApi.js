@@ -1,12 +1,6 @@
-// Game Room API service for Tic Tac Toe
 const API_BASE_URL = 'https://game-room-api.fly.dev/api';
 
 export const TicTacToeApi = {
-  /**
-   * Create a new game room
-   * @param {string} player1 - Name of player 1 (X)
-   * @returns {Promise<{roomId: string, gameState: Object}>}
-   */
   createRoom: async (player1) => {
     try {
       const initialState = {
@@ -15,7 +9,7 @@ export const TicTacToeApi = {
         player1: player1,
         player2: null,
         lastUpdate: Date.now(),
-        status: 'waiting' // waiting, active, finished
+        status: 'waiting' 
       };
 
       const response = await fetch(`${API_BASE_URL}/rooms`, {
@@ -37,15 +31,8 @@ export const TicTacToeApi = {
     }
   },
 
-  /**
-   * Join an existing game room
-   * @param {string} roomId - The room ID to join
-   * @param {string} player2 - Name of player 2 (O)
-   * @returns {Promise<Object>} - Updated game state
-   */
   joinRoom: async (roomId, player2) => {
     try {
-      // First get the current game state
       const currentState = await TicTacToeApi.getGameState(roomId);
       
       if (!currentState) {
@@ -55,16 +42,12 @@ export const TicTacToeApi = {
       if (currentState.player2) {
         throw new Error('Room is full');
       }
-
-      // Update with player 2 info
       const updatedState = {
         ...currentState,
         player2: player2,
         status: 'active',
         lastUpdate: Date.now()
       };
-
-      // Update the game state on the server
       return await TicTacToeApi.updateGameState(roomId, updatedState);
     } catch (error) {
       console.error('Error joining room:', error);
@@ -72,11 +55,6 @@ export const TicTacToeApi = {
     }
   },
 
-  /**
-   * Get the current game state
-   * @param {string} roomId - The room ID
-   * @returns {Promise<Object>} - Current game state
-   */
   getGameState: async (roomId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`);
@@ -96,12 +74,6 @@ export const TicTacToeApi = {
     }
   },
 
-  /**
-   * Update the game state
-   * @param {string} roomId - The room ID
-   * @param {Object} gameState - New game state
-   * @returns {Promise<Object>} - Updated game state
-   */
   updateGameState: async (roomId, gameState) => {
     try {
       const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`, {
@@ -124,13 +96,6 @@ export const TicTacToeApi = {
     }
   },
 
-  /**
-   * Make a move in the game
-   * @param {string} roomId - The room ID
-   * @param {number} squareIndex - Index of square (0-8)
-   * @param {string} playerRole - 'X' or 'O'
-   * @returns {Promise<Object>} - Updated game state
-   */
   makeMove: async (roomId, squareIndex, playerRole) => {
     try {
       const gameState = await TicTacToeApi.getGameState(roomId);
@@ -150,15 +115,12 @@ export const TicTacToeApi = {
         throw new Error('Invalid move');
       }
 
-      // Make the move
       const newSquares = [...gameState.squares];
       newSquares[squareIndex] = gameState.isXNext ? 'X' : 'O';
       
-      // Check if the game is over
       const winner = calculateWinner(newSquares);
       const isDraw = !winner && newSquares.every(square => square !== null);
       
-      // Update game state
       const updatedState = {
         ...gameState,
         squares: newSquares,
@@ -167,7 +129,6 @@ export const TicTacToeApi = {
         status: winner || isDraw ? 'finished' : 'active'
       };
 
-      // Send updated state to server
       return await TicTacToeApi.updateGameState(roomId, updatedState);
     } catch (error) {
       console.error('Error making move:', error);
@@ -175,11 +136,6 @@ export const TicTacToeApi = {
     }
   },
 
-  /**
-   * Reset the game
-   * @param {string} roomId - The room ID
-   * @returns {Promise<Object>} - Updated game state
-   */
   resetGame: async (roomId) => {
     try {
       const gameState = await TicTacToeApi.getGameState(roomId);
@@ -204,7 +160,6 @@ export const TicTacToeApi = {
   }
 };
 
-// Helper function to calculate winner
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
