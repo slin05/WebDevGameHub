@@ -24,8 +24,10 @@ const WordleGame = () => {
   // Get random word from API
   const getRandomWord = async () => {
     try {
+      // Make sure wordLength is defined before making the request
+      const length = wordLength || 5;
       const response = await fetch(
-        `https://random-word-api.vercel.app/api?words=1&length=${wordLength}`
+        `https://random-word-api.vercel.app/api?words=1&length=${length}`
       );
       const data = await response.json();
       return data[0];
@@ -156,7 +158,7 @@ const WordleGame = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [grid, currentAttempt, currentPosition, gameStatus]);
+  }, [grid, currentAttempt, currentPosition, gameStatus, wordLength]);
 
   // Reset the game
   const resetGame = async () => {
