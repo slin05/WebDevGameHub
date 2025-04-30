@@ -4,8 +4,8 @@ import './WordleGame.css';
 const WordleGame = () => {
   // Game state
   const [targetWord, setTargetWord] = useState("");
-  const [attempts, setAttempts] = useState(6);
-  const [wordLength, setWordLength] = useState(5);
+  const [attempts] = useState(6);
+  const [wordLength] = useState(5);
   const [currentAttempt, setCurrentAttempt] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [grid, setGrid] = useState(Array(6).fill().map(() => Array(5).fill("")));
@@ -16,6 +16,14 @@ const WordleGame = () => {
   const [showInvalidWordMsg, setShowInvalidWordMsg] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
+  // Fallback word list (all 5 letters)
+  const fallbackWords = [
+    "apple", "baker", "candy", "dance", "eagle", "faith", "giant", "happy", 
+    "igloo", "jumbo", "karma", "lemon", "magic", "noble", "ocean", "piano", 
+    "queen", "raise", "snake", "table", "unity", "value", "waste", "xerox", 
+    "yacht", "zebra", "about", "begun", "charm", "ditch", "earth", "flame"
+  ];
+
   // Initialize game on component mount
   useEffect(() => {
     initializeGame();
@@ -24,23 +32,42 @@ const WordleGame = () => {
   // Get random word from API
   const getRandomWord = async () => {
     try {
-      // Make sure wordLength is defined before making the request
-      const length = wordLength || 5;
+      // Use the Vercel Random Word API to get a 5-letter word
       const response = await fetch(
-        `https://random-word-api.vercel.app/api?words=1&length=${length}`
+        `https://random-word-api.vercel.app/api?words=1&length=5`
       );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch word");
+      }
+      
       const data = await response.json();
       return data[0];
     } catch (error) {
       console.error("Error fetching word:", error);
-      return "hello"; // Fallback word
+      // Return random word from fallback list if API fails
+      return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
     }
   };
 
   // Initialize game state
   const initializeGame = async () => {
-    const word = await getRandomWord();
-    setTargetWord(word);
+    try {
+      const word = await getRandomWord();
+      // Ensure we have a valid 5-letter word
+      if (word && word.length === 5) {
+        setTargetWord(word);
+      } else {
+        // If API returned invalid word, use fallback
+        const fallbackWord = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+        setTargetWord(fallbackWord);
+      }
+    } catch (error) {
+      console.error("Error initializing game:", error);
+      // Use fallback word if initialization fails
+      const fallbackWord = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+      setTargetWord(fallbackWord);
+    }
   };
 
   // Check if input is a letter
@@ -71,12 +98,15 @@ const WordleGame = () => {
   // Check if word is valid using dictionary API
   const isWordValid = async (word) => {
     try {
+      // Only use API to validate word
       const response = await fetch(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
       );
       return response.ok;
     } catch (error) {
-      return false;
+      console.error("Error validating word:", error);
+      // If API fails, assume word is valid to not block gameplay
+      return true;
     }
   };
 
@@ -86,7 +116,7 @@ const WordleGame = () => {
     const targetLetters = targetWord.split("");
 
     return letters.map((letter, index) => {
-      if (letter.toLowerCase() === targetLetters[index].toLowerCase()) {
+      if (letter.toLowerCase() === targetLetters[index]?.toLowerCase()) {
         return "correct";
       }
       if (targetLetters.includes(letter.toLowerCase())) {
@@ -158,7 +188,7 @@ const WordleGame = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [grid, currentAttempt, currentPosition, gameStatus, wordLength]);
+  }, [grid, currentAttempt, currentPosition, gameStatus, wordLength, targetWord]);
 
   // Reset the game
   const resetGame = async () => {
@@ -167,13 +197,54 @@ const WordleGame = () => {
     setGrid(Array(6).fill().map(() => Array(5).fill("")));
     setCellStates(Array(6).fill().map(() => Array(5).fill(null)));
     setGameStatus("playing");
-    const word = await getRandomWord();
-    setTargetWord(word);
+    
+    try {
+      const word = await getRandomWord();
+      setTargetWord(word);
+    } catch (error) {
+      const fallbackWord = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+      setTargetWord(fallbackWord);
+    }
   };
 
   // Toggle dark mode
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
+  };
+
+  // Virtual keyboard to make the game playable on mobile
+  const renderVirtualKeyboard = () => {
+    const rows = [
+      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+      ['Enter', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Backspace']
+    ];
+
+    return (
+      <div className="virtual-keyboard">
+        {rows.map((row, rowIndex) => (
+          <div key={`keyboard-row-${rowIndex}`} className="keyboard-row">
+            {row.map((key) => (
+              <button
+                key={`key-${key}`}
+                className={`keyboard-key ${key === 'Enter' || key === 'Backspace' ? 'keyboard-key-wide' : ''}`}
+                onClick={() => {
+                  if (key === 'Enter') {
+                    submitGuess();
+                  } else if (key === 'Backspace') {
+                    removeLetterFromGrid();
+                  } else {
+                    addLetterToGrid(key);
+                  }
+                }}
+              >
+                {key === 'Backspace' ? '⌫' : key}
+              </button>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   // Render game board
@@ -217,6 +288,8 @@ const WordleGame = () => {
           <button className="reset-button" onClick={resetGame}>Play Again</button>
         </div>
       )}
+      
+      {renderVirtualKeyboard()}
     </div>
   );
 };
