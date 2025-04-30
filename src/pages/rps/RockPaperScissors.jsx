@@ -1,7 +1,7 @@
 import "./RockPaperScissors.css";
 import WelcomeView from './WelcomeView';
 import GameView from './GameView';
-import LocalStorageMultiplayerView from './LocalStorageMultiplayerView';
+import ApiMultiplayerView from './ApiMultiplayerView';
 import { useState, useEffect } from 'react';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
         />
       ) : (
         gameMode === "multiplayer" ? (
-          <LocalStorageMultiplayerView 
+          <ApiMultiplayerView 
             userName={userName} 
             onReset={() => {
               setGameStarted(false);

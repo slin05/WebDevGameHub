@@ -10,13 +10,13 @@ function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="border p-4">
           <h3 className="font-bold">Rock Paper Scissors</h3>
-          <p>Play the classic game of chance against the computer!</p>
+          <p>Play the classic game of chance against an AI or another player!</p>
           <Link to="/rock-paper-scissors" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
         </div>
         
         <div className="border p-4">
           <h3 className="font-bold">Tic Tac Toe</h3>
-          <p>Challenge yourself in this strategic game of X's and O's.</p>
+          <p>Challenge yourself against an AI or another player in this strategic game of X's and O's!</p>
           <Link to="/tic-tac-toe" className="bg-blue-500 text-white p-1 mt-2 inline-block">Play Now</Link>
         </div>
         

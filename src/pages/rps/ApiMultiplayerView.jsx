@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { LocalStorageMultiplayerRPS } from "./rps-localStorage-multiplayer.js";
+import { ApiMultiplayerRPS } from "./rps-api-multiplayer.js";
 
-const LocalStorageMultiplayerView = ({ userName, onReset }) => {
+const ApiMultiplayerView = ({ userName, onReset }) => {
   const [roomCode, setRoomCode] = useState("");
   const [joiningRoom, setJoiningRoom] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
@@ -10,6 +10,9 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
   const [gameHistory, setGameHistory] = useState([]);
   const [userChoice, setUserChoice] = useState("rock");
   const [hasSelected, setHasSelected] = useState(false);
+  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
+  const [isJoiningRoom, setIsJoiningRoom] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   const gameRef = useRef(null);
   
@@ -21,56 +24,111 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
     };
   }, []);
   
-  const handleCreateRoom = () => {
-    const newRoomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    setRoomCode(newRoomCode);
-    initializeGame(newRoomCode);
+  const handleCreateRoom = async () => {
+    try {
+      setIsCreatingRoom(true);
+      setErrorMessage("");
+      
+      gameRef.current = new ApiMultiplayerRPS(null, userName);
+      
+      gameRef.current.onStateChanged = (gameState) => {
+        setPlayers([...gameState.players]);
+        setScores({...gameState.scores});
+        setGameHistory([...gameState.gameHistory]);
+        
+        if (gameState.selections && gameState.selections[userName]) {
+          setHasSelected(true);
+        } else {
+          setHasSelected(false);
+        }
+      };
+      
+      await new Promise(resolve => {
+        const checkRoomCode = () => {
+          if (gameRef.current.roomCode) {
+            setRoomCode(gameRef.current.roomCode);
+            resolve();
+          } else {
+            setTimeout(checkRoomCode, 100);
+          }
+        };
+        checkRoomCode();
+      });
+      
+      const currentState = await gameRef.current.getGameState();
+      setPlayers([...currentState.players]);
+      setScores({...currentState.scores});
+      setGameHistory([...currentState.gameHistory]);
+      
+      setGameStarted(true);
+    } catch (error) {
+      console.error("Error creating room:", error);
+      setErrorMessage("Failed to create room. Please try again.");
+    } finally {
+      setIsCreatingRoom(false);
+    }
   };
   
-  const handleJoinRoom = () => {
+  const handleJoinRoom = async () => {
     if (roomCode.length < 4) {
-      alert("Please enter a valid room code");
+      setErrorMessage("Please enter a valid room code");
       return;
     }
     
-    initializeGame(roomCode);
-  };
-  
-  const initializeGame = (code) => {
-    gameRef.current = new LocalStorageMultiplayerRPS(code, userName);
-    
-    gameRef.current.onStateChanged = (gameState) => {
-      setPlayers([...gameState.players]);
-      setScores({...gameState.scores});
-      setGameHistory([...gameState.gameHistory]);
+    try {
+      setIsJoiningRoom(true);
+      setErrorMessage("");
       
-      if (gameState.selections && gameState.selections[userName]) {
-        setHasSelected(true);
-      } else {
-        setHasSelected(false);
-      }
-    };
-    
-    const currentState = gameRef.current.getGameState();
-    setPlayers([...currentState.players]);
-    setScores({...currentState.scores});
-    setGameHistory([...currentState.gameHistory]);
-    
-    setGameStarted(true);
+      gameRef.current = new ApiMultiplayerRPS(roomCode, userName);
+      
+      gameRef.current.onStateChanged = (gameState) => {
+        setPlayers([...gameState.players]);
+        setScores({...gameState.scores});
+        setGameHistory([...gameState.gameHistory]);
+        
+        if (gameState.selections && gameState.selections[userName]) {
+          setHasSelected(true);
+        } else {
+          setHasSelected(false);
+        }
+      };
+      
+      const currentState = await gameRef.current.getGameState();
+      setPlayers([...currentState.players]);
+      setScores({...currentState.scores});
+      setGameHistory([...currentState.gameHistory]);
+      
+      setGameStarted(true);
+    } catch (error) {
+      console.error("Error joining room:", error);
+      setErrorMessage("Failed to join room. Please check the room code and try again.");
+    } finally {
+      setIsJoiningRoom(false);
+    }
   };
   
-  const handlePlay = () => {
-    gameRef.current.makeSelection(userChoice);
-    setHasSelected(true);
+  const handlePlay = async () => {
+    try {
+      setErrorMessage("");
+      await gameRef.current.makeSelection(userChoice);
+      setHasSelected(true);
+    } catch (error) {
+      console.error("Error making selection:", error);
+      setErrorMessage("Failed to submit your choice. Please try again.");
+    }
   };
   
   const handleSelectChange = (e) => {
     setUserChoice(e.target.value);
   };
   
-  const handleReset = () => {
+  const handleReset = async () => {
     if (gameRef.current) {
-      gameRef.current.leaveGame();
+      try {
+        await gameRef.current.leaveGame();
+      } catch (error) {
+        console.error("Error leaving game:", error);
+      }
     }
     
     onReset();
@@ -81,18 +139,26 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
       <h2>Multiplayer</h2>
       <p>Play Rock Paper Scissors against someone else!</p>
       
+      {errorMessage && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          {errorMessage}
+        </div>
+      )}
+      
       {!joiningRoom ? (
         <div>
           <button 
             className="btn btn-primary" 
             onClick={handleCreateRoom}
+            disabled={isCreatingRoom}
           >
-            Create New Game
+            {isCreatingRoom ? "Creating..." : "Create New Game"}
           </button>
           <button 
             className="btn btn-secondary" 
             onClick={() => setJoiningRoom(true)}
             style={{ marginLeft: '10px' }}
+            disabled={isCreatingRoom}
           >
             Join Existing Game
           </button>
@@ -114,13 +180,18 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
           <button 
             className="btn btn-success" 
             onClick={handleJoinRoom}
+            disabled={isJoiningRoom}
           >
-            Join Game
+            {isJoiningRoom ? "Joining..." : "Join Game"}
           </button>
           <button 
             className="btn btn-secondary" 
-            onClick={() => setJoiningRoom(false)}
+            onClick={() => {
+              setJoiningRoom(false);
+              setErrorMessage("");
+            }}
             style={{ marginLeft: '10px' }}
+            disabled={isJoiningRoom}
           >
             Back
           </button>
@@ -135,6 +206,12 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
         <h3>Room Code: {roomCode}</h3>
         <p>Share this code with friends to let them join</p>
       </div>
+      
+      {errorMessage && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          {errorMessage}
+        </div>
+      )}
       
       <div id="score-tally">
         <h3>Players:</h3>
@@ -201,4 +278,4 @@ const LocalStorageMultiplayerView = ({ userName, onReset }) => {
   return gameStarted ? renderGame() : renderLobby();
 };
 
-export default LocalStorageMultiplayerView;
+export default ApiMultiplayerView;

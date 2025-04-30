@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './tictactoe.css';
+import { TicTacToeApi } from './tictactoeApi';
 
 function Square({ value, onSquareClick }) {
   return (
@@ -38,140 +39,160 @@ function Board({ squares, onPlay, isMyTurn }) {
   );
 }
 
-export default function Game() {
+export default function TicTacToe() {
   const [roomCode, setRoomCode] = useState('');
   const [inputRoomCode, setInputRoomCode] = useState('');
   const [playerRole, setPlayerRole] = useState('');
   const [showLobby, setShowLobby] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [player1, setPlayer1] = useState('Player X');
   const [player2, setPlayer2] = useState('Player O');
   
+  const pollIntervalRef = useRef(null);
+  
   const winner = calculateWinner(squares);
   const isDraw = !winner && squares.every(square => square !== null);
   const isMyTurn = (isXNext && playerRole === 'X') || (!isXNext && playerRole === 'O');
   
-  const getGameKey = (code) => `ttt-${code}`;
-  
-  function generateCode() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  async function createRoom() {
+    try {
+      setLoading(true);
+      setErrorMsg('');
+      
+      const result = await TicTacToeApi.createRoom(player1);
+      
+      setRoomCode(result.roomId);
+      setPlayerRole('X');
+      setSquares(result.gameState.squares);
+      setIsXNext(result.gameState.isXNext);
+      
+      startGamePolling(result.roomId);
+      
+      setShowLobby(false);
+    } catch (error) {
+      console.error('Error creating room:', error);
+      setErrorMsg('Failed to create room. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
   
-  function createRoom() {
-    const code = generateCode();
-    setRoomCode(code);
-    setPlayerRole('X');
-    
-    const gameState = {
-      squares: Array(9).fill(null),
-      isXNext: true,
-      player1,
-      player2,
-      lastUpdate: Date.now()
-    };
-    
-    localStorage.setItem(getGameKey(code), JSON.stringify(gameState));
-    setShowLobby(false);
-  }
-  
-  function joinRoom() {
-    const gameKey = getGameKey(inputRoomCode);
-    const gameState = JSON.parse(localStorage.getItem(gameKey));
-    
-    if (!gameState) {
-      setErrorMsg('Room not found');
+  async function joinRoom() {
+    if (!inputRoomCode) {
+      setErrorMsg('Please enter a room code');
       return;
     }
     
-    setRoomCode(inputRoomCode);
-    setPlayerRole('O');
-    setSquares(gameState.squares);
-    setIsXNext(gameState.isXNext);
-    setPlayer1(gameState.player1);
-    
-    gameState.player2 = player2;
-    gameState.lastUpdate = Date.now();
-    localStorage.setItem(gameKey, JSON.stringify(gameState));
-    
-    setShowLobby(false);
-    setErrorMsg('');
+    try {
+      setLoading(true);
+      setErrorMsg('');
+      
+      const gameState = await TicTacToeApi.getGameState(inputRoomCode);
+      
+      if (!gameState) {
+        setErrorMsg('Room not found');
+        setLoading(false);
+        return;
+      }
+      
+      if (gameState.player2) {
+        setErrorMsg('Room is full');
+        setLoading(false);
+        return;
+      }
+      
+      const updatedState = await TicTacToeApi.joinRoom(inputRoomCode, player2);
+      
+      setRoomCode(inputRoomCode);
+      setPlayerRole('O');
+      setSquares(updatedState.squares);
+      setIsXNext(updatedState.isXNext);
+      setPlayer1(updatedState.player1);
+      
+      startGamePolling(inputRoomCode);
+      
+      setShowLobby(false);
+    } catch (error) {
+      console.error('Error joining room:', error);
+      setErrorMsg('Failed to join room. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
   
-  function exitRoom() {
-    setShowLobby(true);
-    setSquares(Array(9).fill(null));
-    setIsXNext(true);
-  }
-  
-  function handlePlay(i) {
-    if (!isMyTurn || winner || squares[i]) return;
+  function startGamePolling(roomId) {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+    }
     
-    const newSquares = [...squares];
-    newSquares[i] = isXNext ? 'X' : 'O';
-    
-    setSquares(newSquares);
-    setIsXNext(!isXNext);
-    
-    const gameState = {
-      squares: newSquares,
-      isXNext: !isXNext,
-      player1,
-      player2,
-      lastUpdate: Date.now()
-    };
-    
-    localStorage.setItem(getGameKey(roomCode), JSON.stringify(gameState));
-  }
-  
-  function resetGame() {
-    const gameState = {
-      squares: Array(9).fill(null),
-      isXNext: true,
-      player1,
-      player2,
-      lastUpdate: Date.now()
-    };
-    
-    setSquares(Array(9).fill(null));
-    setIsXNext(true);
-    localStorage.setItem(getGameKey(roomCode), JSON.stringify(gameState));
-  }
-  
-  useEffect(() => {
-    function handleStorageChange(e) {
-      if (e.key === getGameKey(roomCode)) {
-        const gameState = JSON.parse(e.newValue);
+    pollIntervalRef.current = setInterval(async () => {
+      try {
+        const gameState = await TicTacToeApi.getGameState(roomId);
+        
         if (gameState) {
           setSquares(gameState.squares);
           setIsXNext(gameState.isXNext);
           setPlayer1(gameState.player1);
-          setPlayer2(gameState.player2);
+          if (gameState.player2) {
+            setPlayer2(gameState.player2);
+          }
         }
+      } catch (error) {
+        console.error('Error polling game state:', error);
       }
+    }, 1000);
+  }
+  
+  function exitRoom() {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
     }
     
-    window.addEventListener('storage', handleStorageChange);
+    setShowLobby(true);
+    setSquares(Array(9).fill(null));
+    setIsXNext(true);
+    setRoomCode('');
+    setInputRoomCode('');
+    setErrorMsg('');
+  }
+  
+  async function handlePlay(i) {
+    if (!isMyTurn || winner || squares[i]) return;
     
-    const intervalId = setInterval(() => {
-      if (roomCode) {
-        const gameState = JSON.parse(localStorage.getItem(getGameKey(roomCode)));
-        if (gameState && gameState.lastUpdate) {
-          setSquares(gameState.squares);
-          setIsXNext(gameState.isXNext);
-          setPlayer1(gameState.player1);
-          setPlayer2(gameState.player2);
-        }
-      }
-    }, 500);
-    
+    try {
+      const updatedState = await TicTacToeApi.makeMove(roomCode, i, playerRole);
+      
+      setSquares(updatedState.squares);
+      setIsXNext(updatedState.isXNext);
+    } catch (error) {
+      console.error('Error making move:', error);
+    }
+  }
+  
+  async function resetGame() {
+    try {
+      const updatedState = await TicTacToeApi.resetGame(roomCode);
+      
+      setSquares(updatedState.squares);
+      setIsXNext(updatedState.isXNext);
+    } catch (error) {
+      console.error('Error resetting game:', error);
+    }
+  }
+  
+  useEffect(() => {
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      clearInterval(intervalId);
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
     };
-  }, [roomCode]);
+  }, []);
   
   if (showLobby) {
     return (
@@ -184,8 +205,14 @@ export default function Game() {
             placeholder="Your name" 
             value={player1} 
             onChange={(e) => setPlayer1(e.target.value)}
+            disabled={loading}
           />
-          <button onClick={createRoom}>Create Room</button>
+          <button 
+            onClick={createRoom} 
+            disabled={loading || !player1.trim()}
+          >
+            {loading ? 'Creating...' : 'Create Room'}
+          </button>
         </div>
         
         <div className="join-section">
@@ -194,6 +221,7 @@ export default function Game() {
             placeholder="Your name" 
             value={player2} 
             onChange={(e) => setPlayer2(e.target.value)}
+            disabled={loading}
           />
           <input 
             type="text" 
@@ -201,8 +229,14 @@ export default function Game() {
             value={inputRoomCode} 
             onChange={(e) => setInputRoomCode(e.target.value.toUpperCase())}
             maxLength={6}
+            disabled={loading}
           />
-          <button onClick={joinRoom}>Join Room</button>
+          <button 
+            onClick={joinRoom} 
+            disabled={loading || !player2.trim() || !inputRoomCode.trim()}
+          >
+            {loading ? 'Joining...' : 'Join Room'}
+          </button>
           {errorMsg && <p className="error">{errorMsg}</p>}
         </div>
       </div>
@@ -229,11 +263,11 @@ export default function Game() {
       <Board 
         squares={squares} 
         onPlay={handlePlay}
-        isMyTurn={isMyTurn} 
+        isMyTurn={isMyTurn && !winner && !isDraw} 
       />
       
       <div className="controls">
-        <button onClick={resetGame}>Reset Game</button>
+        <button onClick={resetGame} disabled={!playerRole}>Reset Game</button>
         <button onClick={exitRoom}>Exit Room</button>
       </div>
     </div>
