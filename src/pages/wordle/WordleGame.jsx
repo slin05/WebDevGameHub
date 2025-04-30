@@ -212,41 +212,6 @@ const WordleGame = () => {
     setDarkMode(!darkMode);
   };
 
-  // Virtual keyboard to make the game playable on mobile
-  const renderVirtualKeyboard = () => {
-    const rows = [
-      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-      ['Enter', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Backspace']
-    ];
-
-    return (
-      <div className="virtual-keyboard">
-        {rows.map((row, rowIndex) => (
-          <div key={`keyboard-row-${rowIndex}`} className="keyboard-row">
-            {row.map((key) => (
-              <button
-                key={`key-${key}`}
-                className={`keyboard-key ${key === 'Enter' || key === 'Backspace' ? 'keyboard-key-wide' : ''}`}
-                onClick={() => {
-                  if (key === 'Enter') {
-                    submitGuess();
-                  } else if (key === 'Backspace') {
-                    removeLetterFromGrid();
-                  } else {
-                    addLetterToGrid(key);
-                  }
-                }}
-              >
-                {key === 'Backspace' ? '⌫' : key}
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   // Render game board
   return (
     <div className={`wordle-game ${darkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -288,8 +253,6 @@ const WordleGame = () => {
           <button className="reset-button" onClick={resetGame}>Play Again</button>
         </div>
       )}
-      
-      {renderVirtualKeyboard()}
     </div>
   );
 };
