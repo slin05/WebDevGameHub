@@ -249,7 +249,7 @@ const WordleGame = () => {
       
       {gameStatus === "lost" && (
         <div className="message game-over">
-          <p>Game Over! The word was {targetWord}</p>
+          <p>Game Over! The word was: {targetWord}</p>
           <button className="reset-button" onClick={resetGame}>Play Again</button>
         </div>
       )}
