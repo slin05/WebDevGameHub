@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import TicTacToe from './pages/tictactoe/tictactoe';
@@ -10,7 +10,7 @@ import './App.css';
 
 function App() {
   return (
-    <Router basename="/WebDevGameHub">
+    <HashRouter>
       <div className="app">
         <Navigation />
         <main className="main-content">
@@ -24,7 +24,7 @@ function App() {
           </Routes>
         </main>
       </div>
-    </Router>
+    </HashRouter>
   );
 }
 
