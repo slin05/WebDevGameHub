@@ -4,7 +4,7 @@ import { UserProvider } from './UserContext';
 import UsernamePrompt from './components/UsernamePrompt';
 import HomePage from './pages/HomePage';
 import RockPaperScissors from './pages/rps/RockPaperScissors';
-import TicTacToe from './pages/tictactoe/TicTacToe';
+import TicTacToe from './pages/tictactoe/tictactoe';
 import DinoGame from './pages/dino-game/DinoGame';
 import WordleGame from './pages/wordle/WordleGame';
 import BlackjackGame from './pages/black-jack/BlackjackGame';
