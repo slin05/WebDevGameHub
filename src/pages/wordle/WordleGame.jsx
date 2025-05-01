@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '../../UserContext';
 import './WordleGame.css';
 
 const WordleGame = () => {
+  // Get username from context
+  const { username } = useUser();
+  
   // Game state
   const [targetWord, setTargetWord] = useState("");
   const [attempts] = useState(6);
@@ -216,6 +220,7 @@ const WordleGame = () => {
   return (
     <div className={`wordle-game ${darkMode ? 'dark-mode' : 'light-mode'}`}>
       <div className="game-header">
+        <div className="user-info">Welcome, {username}!</div>
         <button className="theme-toggle" onClick={toggleDarkMode}>
           {darkMode ? '☀️' : '🌙'}
         </button>
@@ -242,14 +247,14 @@ const WordleGame = () => {
       
       {gameStatus === "won" && (
         <div className="message success">
-          <p>You won!</p>
+          <p>You won! Great job, {username}!</p>
           <button className="reset-button" onClick={resetGame}>Play Again</button>
         </div>
       )}
       
       {gameStatus === "lost" && (
         <div className="message game-over">
-          <p>Game Over! The word was: {targetWord}</p>
+          <p>Game Over! The word was {targetWord}</p>
           <button className="reset-button" onClick={resetGame}>Play Again</button>
         </div>
       )}

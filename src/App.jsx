@@ -1,30 +1,51 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import Navigation from './components/Navigation';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { UserProvider } from './UserContext';
+import UsernamePrompt from './components/UsernamePrompt';
 import HomePage from './pages/HomePage';
-import TicTacToe from './pages/tictactoe/tictactoe';
 import RockPaperScissors from './pages/rps/RockPaperScissors';
-import DinoGame from './pages/dino-game/DinoGame'; 
+import TicTacToe from './pages/tictactoe/TicTacToe';
+import DinoGame from './pages/dino-game/DinoGame';
+import WordleGame from './pages/wordle/WordleGame';
 import BlackjackGame from './pages/black-jack/BlackjackGame';
-import WordlePage from './pages/wordle/WordlePage';
 import './App.css';
 
 function App() {
   return (
-    <HashRouter>
-      <div className="app">
-        <Navigation />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/rock-paper-scissors" element={<RockPaperScissors />} />
-            <Route path="/tic-tac-toe" element={<TicTacToe />} />
-            <Route path="/dino-game" element={<DinoGame />} /> 
-            <Route path="/black-jack" element={<BlackjackGame />} /> 
-            <Route path="/wordle" element={<WordlePage />} /> 
-          </Routes>
-        </main>
-      </div>
-    </HashRouter>
+    <UserProvider>
+      <Router>
+        <div className="app-container">
+          <header className="app-header">
+            <div className="app-title">ByteMe</div>
+            <nav className="app-nav">
+              <Link to="/">Home</Link>
+              <Link to="/rock-paper-scissors">Rock Paper Scissors</Link>
+              <Link to="/tic-tac-toe">Tic Tac Toe</Link>
+              <Link to="/dino-game">Dino Game</Link>
+              <Link to="/wordle">Wordle</Link>
+              <Link to="/blackjack">Blackjack</Link>
+            </nav>
+          </header>
+          
+          <main className="app-content">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/rock-paper-scissors" element={<RockPaperScissors />} />
+              <Route path="/tic-tac-toe" element={<TicTacToe />} />
+              <Route path="/dino-game" element={<DinoGame />} />
+              <Route path="/wordle" element={<WordleGame />} />
+              <Route path="/blackjack" element={<BlackjackGame />} />
+            </Routes>
+          </main>
+          
+          <footer className="app-footer">
+            ByteMe @2025
+          </footer>
+          
+          <UsernamePrompt />
+        </div>
+      </Router>
+    </UserProvider>
   );
 }
 

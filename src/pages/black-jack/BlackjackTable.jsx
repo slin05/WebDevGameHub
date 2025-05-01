@@ -21,7 +21,7 @@ const initialDeck = () => {
     return shuffledDeck;
 };
 
-const BlackjackTable = () => {
+const BlackjackTable = ({ playerName = "Player" }) => {
     const [deck, setDeck] = useState([]);
     const [playerHand, setPlayerHand] = useState([]);
     const [dealerHand, setDealerHand] = useState([]);
@@ -80,7 +80,7 @@ const BlackjackTable = () => {
         try {
             const newDeck = [...deck];
             const newCard = newDeck.pop();
-            console.log("Player hits, gets:", newCard);
+            console.log(`${playerName} hits, gets:`, newCard);
             
             if (!newCard) {
                 setError("No more cards in deck");
@@ -89,13 +89,13 @@ const BlackjackTable = () => {
             
             const newHand = [...playerHand, newCard];
             const handValue = calculateHandValue(newHand);
-            console.log("New player hand value:", handValue);
+            console.log(`New ${playerName}'s hand value:`, handValue);
             
             setDeck(newDeck);
             setPlayerHand(newHand);
             
             if (handValue > 21) {
-                console.log("Player busts!");
+                console.log(`${playerName} busts!`);
                 setGameOver(true);
             }
         } catch (err) {
@@ -107,7 +107,7 @@ const BlackjackTable = () => {
     const stay = () => {
         if (gameOver) return;
         
-        console.log("Player stays. Dealer's turn.");
+        console.log(`${playerName} stays. Dealer's turn.`);
         setIsDealerTurn(true);
         
         setTimeout(dealerTurn, 0);
@@ -178,17 +178,40 @@ const BlackjackTable = () => {
         return value;
     };
 
+    // Determine winner and update display message
+    const getResultMessage = () => {
+        if (!gameOver) return "";
+        
+        const playerValue = calculateHandValue(playerHand);
+        const dealerValue = calculateHandValue(dealerHand);
+        
+        if (playerValue > 21) {
+            return `${playerName} busts with ${playerValue}! Dealer wins.`;
+        } else if (dealerValue > 21) {
+            return `Dealer busts with ${dealerValue}! ${playerName} wins!`;
+        } else if (playerValue > dealerValue) {
+            return `${playerName} wins with ${playerValue} vs Dealer's ${dealerValue}!`;
+        } else if (dealerValue > playerValue) {
+            return `Dealer wins with ${dealerValue} vs ${playerName}'s ${playerValue}.`;
+        } else {
+            return `It's a tie! Both have ${playerValue}.`;
+        }
+    };
+
     return (
         <div className="blackjack-table">
             {error && (
                 <div style={{ color: 'red', padding: '10px', margin: '10px 0' }}>{error}</div>
             )}
             <Dealer hand={dealerHand} isDealerTurn={isDealerTurn} />
-            <Player hand={playerHand} balance={playerBalance} />
+            <Player hand={playerHand} balance={playerBalance} playerName={playerName} />
             <Controls hit={hit} stay={stay} gameOver={gameOver} dealInitialCards={dealInitialCards} />
             <div style={{ marginTop: '20px' }}>
-                <p>Player Hand Value: {calculateHandValue(playerHand)}</p>
+                <p>{playerName}'s Hand Value: {calculateHandValue(playerHand)}</p>
                 {isDealerTurn && <p>Dealer Hand Value: {calculateHandValue(dealerHand)}</p>}
+                {gameOver && isDealerTurn && (
+                    <div className="result-message">{getResultMessage()}</div>
+                )}
             </div>
         </div>
     );

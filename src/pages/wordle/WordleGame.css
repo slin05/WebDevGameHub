@@ -40,8 +40,14 @@
 .game-header {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
+}
+
+.user-info {
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .theme-toggle {
@@ -165,16 +171,4 @@
   40%, 60% {
     transform: translateX(4px);
   }
-}
-
-.reset-button
- {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
 }
