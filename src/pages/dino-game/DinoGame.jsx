@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './DinoGame.css';
+import { useUser } from "../../UserContext";
 
 import dinoImageSrc from './img/dino.png';
 import dinoDeadImageSrc from './img/dino-dead.png';
@@ -8,6 +9,7 @@ import cactus2ImageSrc from './img/cactus2.png';
 import cactus3ImageSrc from './img/cactus3.png';
 
 const DinoGame = () => {
+  const { username } = useUser();
   const boardRef = useRef(null);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -20,7 +22,7 @@ const DinoGame = () => {
   const dino = useRef({ x: dinoX, y: dinoY, width: dinoWidth, height: dinoHeight });
   const velocityYRef = useRef(0);
   const gravity = 0.4;
-  const velocityX = -6; // Consistent speed for cacti
+  const velocityX = -6;
 
   const cactusArrayRef = useRef([]);
   const animationIdRef = useRef(null);
@@ -37,7 +39,6 @@ const DinoGame = () => {
     board.height = 250;
     const context = board.getContext("2d");
 
-    // Load images with imports
     dinoImg.current.src = dinoImageSrc;
     dinoDeadImg.current.src = dinoDeadImageSrc;
     cactus1Img.current.src = cactus1ImageSrc;
@@ -49,29 +50,23 @@ const DinoGame = () => {
 
       context.clearRect(0, 0, board.width, board.height);
 
-      // Dino physics
       velocityYRef.current += gravity;
       dino.current.y = Math.min(dino.current.y + velocityYRef.current, dinoY);
 
-      // Draw dino
       context.drawImage(dinoImg.current, dino.current.x, dino.current.y, dino.current.width, dino.current.height);
 
-      // Update cacti positions
       cactusArrayRef.current.forEach((cactus, index) => {
         cactus.x += velocityX;
         context.drawImage(cactus.img, cactus.x, cactus.y, cactus.width, cactus.height);
 
-        // Check collision
         if (detectCollision(dino.current, cactus)) {
           setGameOver(true);
           dinoImg.current = dinoDeadImg.current;
         }
       });
 
-      // Remove cacti that are off screen
       cactusArrayRef.current = cactusArrayRef.current.filter(cactus => cactus.x + cactus.width > 0);
 
-      // Score
       setScore(prev => prev + 1);
 
       animationIdRef.current = requestAnimationFrame(updateGame);
@@ -94,7 +89,6 @@ const DinoGame = () => {
     return () => document.removeEventListener("keydown", handleJump);
   }, [gameOver]);
 
-  // Cactus spawner
   useEffect(() => {
     if (gameOver) return;
 
@@ -120,7 +114,7 @@ const DinoGame = () => {
       }
 
       cactusArrayRef.current.push(newCactus);
-    }, 1200); // every 1.2 seconds
+    }, 1200);
 
     return () => clearInterval(spawnInterval);
   }, [gameOver]);
@@ -145,6 +139,9 @@ const DinoGame = () => {
 
   return (
     <div>
+      <div className="player-info">
+        <h3>Player: {username}</h3>
+      </div>
       <canvas ref={boardRef} id="board" />
       <div>Score: {score}</div>
       {gameOver && (

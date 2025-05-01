@@ -1,36 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useUser } from '../../UserContext';
+import { useNavigate } from 'react-router-dom';
 
-const WelcomeView = ({userName, setUserName, onGameStart}) => {
-  const [showButton, setShowButton] = useState(userName.length >= 2);
+const WelcomeView = ({ onGameStart }) => {
+  const { username } = useUser();
   const [gameMode, setGameMode] = useState("single");
+  const navigate = useNavigate();
   
-  const handleNameChange = (e) => {
-    const value = e.target.value;
-    setUserName(value);
-    setShowButton(value.length >= 2);
+  const goToHomePage = () => {
+    navigate('/');
   };
-  
-  useEffect(() => {
-    setShowButton(userName.length >= 2);
-  }, [userName]);
 
   return (
     <div id="welcome-screen">
       <form id="name-form">
         <div className="form-group">
-          <label htmlFor="username">Type your name: </label>
-          <input
-            value={userName}
-            onChange={handleNameChange}
-            className="form-control"
-            type="text"
-            id="username"
-            name="username"
-            required 
-            placeholder="Enter Name Here..." 
-            minLength="2"
-            maxLength="15"
-          />
+          <label htmlFor="username">Your username: </label>
+          <p>{username}</p>
         </div>
         
         <div className="form-group">
@@ -59,7 +45,7 @@ const WelcomeView = ({userName, setUserName, onGameStart}) => {
           </div>
         </div>
         
-        {showButton && (
+        <div className="button-group">
           <button 
             className="btn btn-primary" 
             id="start-game-button" 
@@ -68,7 +54,16 @@ const WelcomeView = ({userName, setUserName, onGameStart}) => {
           >
             Start Game!
           </button>
-        )}
+          
+          <button 
+            className="btn btn-secondary" 
+            type="button"
+            onClick={goToHomePage}
+            style={{ marginLeft: '10px' }}
+          >
+            Return to Home
+          </button>
+        </div>
       </form>
     </div>
   );
