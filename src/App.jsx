@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import { UserProvider } from './UserContext';
 import UsernamePrompt from './components/UsernamePrompt';
 import HomePage from './pages/HomePage';
@@ -13,7 +13,7 @@ import './App.css';
 function App() {
   return (
     <UserProvider>
-      <Router>
+      <HashRouter>
         <div className="app-container">
           <header className="app-header">
             <div className="app-title">ByteMe</div>
@@ -44,7 +44,7 @@ function App() {
           
           <UsernamePrompt />
         </div>
-      </Router>
+      </HashRouter>
     </UserProvider>
   );
 }
