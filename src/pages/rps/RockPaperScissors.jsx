@@ -19,9 +19,8 @@ function App() {
       
       {!gameStarted ? (
         <WelcomeView 
-          userName={userName} 
-          setUserName={setUserName} 
-          onGameStart={(mode) => {
+          onGameStart={(mode, username) => {
+            setUserName(username);
             setGameMode(mode);
             setGameStarted(true);
           }}
