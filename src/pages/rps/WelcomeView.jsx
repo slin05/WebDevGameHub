@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useUser } from '../../UserContext';
 import { useNavigate } from 'react-router-dom';
 
 const WelcomeView = ({ onGameStart }) => {
-  const { username: contextUsername } = useUser();
   const [gameMode, setGameMode] = useState("single");
   const [gameUsername, setGameUsername] = useState("");
   const navigate = useNavigate();
@@ -13,8 +11,6 @@ const WelcomeView = ({ onGameStart }) => {
   };
 
   const handleStartGame = () => {
-    // Use the game-specific username if provided, otherwise fall back to empty string
-    // This avoids passing undefined or empty username to the game
     const usernameToUse = gameUsername.trim() || "Player";
     onGameStart(gameMode, usernameToUse);
   };
@@ -23,18 +19,15 @@ const WelcomeView = ({ onGameStart }) => {
     <div id="welcome-screen">
       <form id="name-form">
         <div className="form-group">
-          <label htmlFor="game-username">Game Username: </label>
+          <label htmlFor="game-username">Your username: </label>
           <input
             type="text"
             id="game-username"
             className="form-control"
             value={gameUsername}
             onChange={(e) => setGameUsername(e.target.value)}
-            placeholder="Enter username for this game"
+            placeholder="Enter your username"
           />
-          <small className="form-text text-muted">
-            Leave blank to use "Player" as your username
-          </small>
         </div>
         
         <div className="form-group">
