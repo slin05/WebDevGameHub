@@ -4,7 +4,7 @@ import GameView from './GameView';
 import ApiMultiplayerView from './ApiMultiplayerView';
 import { useState, useEffect } from 'react';
 
-function App() {
+function RockPaperScissors() {
   const [userName, setUserName] = useState("");
   const [gameStarted, setGameStarted] = useState(false);
   const [gameMode, setGameMode] = useState("single");
@@ -47,3 +47,5 @@ function App() {
     </div>
   );
 }
+
+export default RockPaperScissors;
