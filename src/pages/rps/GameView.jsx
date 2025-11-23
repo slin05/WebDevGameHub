@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { RockPaperScissors } from "./rps.js";
-import RPSApi from "./rpsApi";
 
 
 const GameView = ({userName, onReset}) => {
