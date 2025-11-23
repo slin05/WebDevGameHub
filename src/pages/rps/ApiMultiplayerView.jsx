@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useRef } from "react";
-import RPSApi from "./rpsApi";   
+import RPSApi from "./rpsApi.js";
+ 
 
 const ApiMultiplayerView = ({ userName, onReset }) => {
     const [roomCode, setRoomCode] = useState("");
