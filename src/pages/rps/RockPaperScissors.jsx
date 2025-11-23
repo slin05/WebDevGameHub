@@ -14,7 +14,7 @@ function RockPaperScissors() {
   }, []);
   
   return (
-    <div className="container">
+      <div className="rps-container">
       <h1 className="mainHeader">Rock Paper Scissors</h1>
       
       {!gameStarted ? (
